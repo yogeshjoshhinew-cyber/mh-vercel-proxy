@@ -2,7 +2,6 @@ module.exports = (req, res) => {
     const url = req.url;
     const method = req.method;
 
-    // CORS Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -27,7 +26,7 @@ module.exports = (req, res) => {
         }
     }
 
-    // 2. Login Interception
+    // 2. Login Interception (Credit Set to 99)
     if (url.includes('/api/login')) {
         return res.status(200).json({
             "success": true,
@@ -36,21 +35,25 @@ module.exports = (req, res) => {
                 "id": 7347,
                 "username": "GSMYOGESH",
                 "email": "admin@gsmyogesh.com",
-                "credits": 99999,
+                "credits": 99,
+                "credit_balance": "99",
                 "status": true,
                 "is_blocked": false
             }
         });
     }
 
-    // 3. Credit Balance Check
+    // 3. Credit Balance Check (String & Number Both Standards Support)
     if (url.includes('request=credit_balance')) {
-        return res.status(200).json({"credit_balance": "99999"});
+        return res.status(200).json({
+            "credit_balance": "99",
+            "credits": 99
+        });
     }
 
     // 4. Operation Rule / Unlock Command Response
     if (url.includes('request=rule1')) {
-        return res.status(200).json({"status": {"result": "success", "credit": 99999}});
+        return res.status(200).json({"status": {"result": "success", "credit": 99}});
     }
 
     // 5. Store Log Endpoint
@@ -58,6 +61,5 @@ module.exports = (req, res) => {
         return res.status(200).json({"success": true, "message": "Authenticated"});
     }
 
-    // Default Fallback Response
     return res.status(200).json({"success": true, "message": "Interceptor Active"});
 };
