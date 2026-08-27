@@ -2,15 +2,16 @@ module.exports = (req, res) => {
     const url = req.url;
     const method = req.method;
 
+    // Direct Connection Termination Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Connection', 'close'); // Har request ke baad connection reset ke liye
 
     if (method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    // 1. Update Check Interception
     if (url.includes('request=get_update')) {
         if (url.includes('module=MTK')) {
             return res.status(200).json({"updates":{"module_name":"MTK","url_link":"https://dl.mhunlocker.com/MTK/MH_Unlocker_MTK.exe","version":"1.6","extension":"exe","allowed_versions":"1.6"}});
@@ -26,7 +27,6 @@ module.exports = (req, res) => {
         }
     }
 
-    // 2. Login Interception (Credit Set to 99)
     if (url.includes('/api/login')) {
         return res.status(200).json({
             "success": true,
@@ -43,7 +43,6 @@ module.exports = (req, res) => {
         });
     }
 
-    // 3. Credit Balance Check (String & Number Both Standards Support)
     if (url.includes('request=credit_balance')) {
         return res.status(200).json({
             "credit_balance": "99",
@@ -51,12 +50,10 @@ module.exports = (req, res) => {
         });
     }
 
-    // 4. Operation Rule / Unlock Command Response
-    if (url.includes('request=rule1')) {
+    if (url.includes('request=rule1') || url.includes('request=rule')) {
         return res.status(200).json({"status": {"result": "success", "credit": 99}});
     }
 
-    // 5. Store Log Endpoint
     if (url.includes('/api/log/store')) {
         return res.status(200).json({"success": true, "message": "Authenticated"});
     }
